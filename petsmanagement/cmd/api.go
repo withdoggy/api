@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/spf13/cobra"
@@ -19,13 +20,18 @@ var apiCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		sd, err := stackdriver.NewExporter(stackdriver.Options{
-			ProjectID: projectID,
+			ProjectID:         projectID,
+			MetricPrefix:      "petsmanagement",
+			ReportingInterval: 60 * time.Second,
 		})
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 		defer sd.Flush()
+
+		sd.StartMetricsExporter()
+		defer sd.StopMetricsExporter()
 		trace.RegisterExporter(sd)
 		d, err := db.NewFirestoreClient(projectID)
 		defer d.Close()
