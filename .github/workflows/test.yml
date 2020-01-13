@@ -56,7 +56,7 @@ jobs:
           --project "$GKE_PROJECT" \
           --region "$GKE_REGION" \
           --platform managed \
-          --memory=128Mi \
-          --port=8080 \
           --allow-unauthenticated \
-          --args=api
+          --args=api \
+          --command=/petsmanagement \
+          --memory=128Mi
