@@ -11,6 +11,7 @@ env:
   GKE_EMAIL: ${{ secrets.GKE_EMAIL }}
   GITHUB_SHA: ${{ github.sha }}
   IMAGE: petsmanagement
+  REGION: europe-west1
 
 jobs:
   setup-build-publish-deploy:
@@ -47,3 +48,11 @@ jobs:
     - name: Publish
       run: |
         docker push gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
+    - name: Deploy service to Cloud Run
+      uses: stefda/action-cloud-run@1.0.0
+      with:
+        image: gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
+        service: petsmanagement
+        project: "$GKE_PROJECT"
+        region: "$GKE_REGION"
+        service key: ${{ secrets.GKE_KEY  }}
