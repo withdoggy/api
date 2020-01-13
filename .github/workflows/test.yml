@@ -11,7 +11,7 @@ env:
   GKE_EMAIL: ${{ secrets.GKE_EMAIL }}
   GITHUB_SHA: ${{ github.sha }}
   IMAGE: petsmanagement
-  REGION: europe-west1
+  GKE_REGION: europe-west1
 
 jobs:
   setup-build-publish-deploy:
@@ -53,6 +53,7 @@ jobs:
       run: |
         gcloud beta run deploy petsmanagement \
           --image "gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA" \
-          --region "$GKE_PROJECT" \
+          --project "$GKE_PROJECT" \
+          --rerion "$GKE_REGION" \
           --platform managed \
           --args=api
