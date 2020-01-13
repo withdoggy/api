@@ -22,8 +22,9 @@ FROM alpine
 RUN apk add --no-cache ca-certificates
 ENV GIN_MODE=release
 # Copy the binary to the production image from the builder stage.
-COPY --from=builder /app/app /app
+COPY --from=builder /app/app /petsmanagement
 
 # Run the web service on container startup.
-ENTRYPOINT ["/app"]
+ENTRYPOINT ["/petsmanagement"]
 CMD ["--help"]
+EXPOSE 8080
