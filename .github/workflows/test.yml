@@ -54,6 +54,6 @@ jobs:
         gcloud beta run deploy petsmanagement \
           --image "gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA" \
           --project "$GKE_PROJECT" \
-          --rerion "$GKE_REGION" \
+          --region "$GKE_REGION" \
           --platform managed \
           --args=api
