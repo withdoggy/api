@@ -18,10 +18,9 @@ var apiCmd = &cobra.Command{
 	Use:   "api",
 	Short: "Run api server",
 	Run: func(cmd *cobra.Command, args []string) {
-
 		sd, err := stackdriver.NewExporter(stackdriver.Options{
 			ProjectID:         projectID,
-			MetricPrefix:      "petsmanagement",
+			MetricPrefix:      "petsmanagement-api",
 			ReportingInterval: 60 * time.Second,
 		})
 		if err != nil {

@@ -5,6 +5,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go"
+	"go.opencensus.io/trace"
 	"google.golang.org/api/iterator"
 )
 
@@ -22,6 +23,8 @@ func NewFirestoreClient(projectId string) (*firestore.Client, error) {
 	return client, nil
 }
 func ListPets(ctx context.Context, cl *firestore.Client) (*ListPetResult, error) {
+	ctx, span := trace.StartSpan(ctx, "fierstore.listpets")
+	defer span.End()
 	iter := cl.Collection("pets").Documents(ctx)
 	defer iter.Stop()
 	var result ListPetResult
