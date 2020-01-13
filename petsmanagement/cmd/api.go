@@ -33,6 +33,7 @@ var apiCmd = &cobra.Command{
 		sd.StartMetricsExporter()
 		defer sd.StopMetricsExporter()
 		trace.RegisterExporter(sd)
+		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 		d, err := db.NewFirestoreClient(projectID)
 		defer d.Close()
 		if err != nil {
