@@ -49,10 +49,9 @@ jobs:
       run: |
         docker push gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
     - name: Deploy service to Cloud Run
-      uses: stefda/action-cloud-run@1.0.0
-      with:
-        image: gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
-        service: petsmanagement
-        project: "$GKE_PROJECT"
-        region: "$GKE_REGION"
-        service key: ${{ secrets.GKE_KEY  }}
+      run: |
+        gcloud beta run deploy petsmanagement \
+          --image "gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA" \
+          --region "$GKE_PROJECT" \
+          --platform managed \
+          --args=api
