@@ -37,6 +37,7 @@ jobs:
     - run: |
         # Set up docker to authenticate
         # via gcloud command-line tool.
+        gcloud components install beta
         gcloud auth configure-docker
 
     # Build the Docker image
