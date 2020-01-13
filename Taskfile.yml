@@ -1,0 +1,6 @@
+version: '2'
+
+tasks:
+  build:
+    cmds:
+      - docker build -t pets -f petsmanagement/Dockerfile .
