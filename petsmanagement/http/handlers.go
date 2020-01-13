@@ -1,17 +1,19 @@
 package http
 
 import (
-	"context"
 	"encoding/json"
 
 	"cloud.google.com/go/firestore"
 	"github.com/gin-gonic/gin"
 	"github.com/withdoggy/api/petsmanagement/db"
+	"go.opencensus.io/trace"
 )
 
 func listPetsHandler(dbCl *firestore.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		data, err := db.ListPets(context.Background(), dbCl)
+		ctx, span := trace.StartSpan(c, "handlers.listpets")
+		defer span.End()
+		data, err := db.ListPets(ctx, dbCl)
 		if err != nil {
 			AbortMsg(500, err, c)
 		}
