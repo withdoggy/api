@@ -11,13 +11,18 @@ import (
 
 func listPetsHandler(dbCl *firestore.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, span := trace.StartSpan(c, "handlers.listpets")
+		ctx, span := trace.StartSpan(c, "handlers.getPets")
 		defer span.End()
 		data, err := db.ListPets(ctx, dbCl)
 		if err != nil {
-			AbortMsg(500, err, c)
+			abortMsg(500, err, c)
 		}
 		s, err := json.Marshal(data)
 		c.JSON(200, string(s))
 	}
+}
+func abortMsg(code int, err error, c *gin.Context) {
+	c.String(code, "Oops! Please retry.")
+	c.Error(err)
+	c.Abort()
 }

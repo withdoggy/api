@@ -23,7 +23,7 @@ func NewFirestoreClient(projectId string) (*firestore.Client, error) {
 	return client, nil
 }
 func ListPets(ctx context.Context, cl *firestore.Client) (*ListPetResult, error) {
-	ctx, span := trace.StartSpan(ctx, "firestore.listpets")
+	ctx, span := trace.StartSpan(ctx, "firestore.getPets")
 	defer span.End()
 	iter := cl.Collection("pets").Documents(ctx)
 	defer iter.Stop()

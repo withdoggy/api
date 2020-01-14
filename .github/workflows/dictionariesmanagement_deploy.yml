@@ -1,18 +1,18 @@
-name: Pets Management Deploy
+name: Dictionaries Management Deploy
 
 on:
   push:
     branches:
     - master
     paths:
-    - 'petsmanagement/**'
+    - 'dictionariesmanagement/**'
 
 # Environment variables available to all jobs and steps in this workflow
 env:
   GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
   GKE_EMAIL: ${{ secrets.GKE_EMAIL }}
   GITHUB_SHA: ${{ github.sha }}
-  IMAGE: petsmanagement
+  IMAGE: dictionariesmanagement
   GKE_REGION: europe-west1
 
 jobs:
@@ -46,19 +46,19 @@ jobs:
     - name: Build docker image
       run: |
         docker build -t gcr.io/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" \
-          -f petsmanagement/Dockerfile .
+          -f dictionariesmanagement/Dockerfile .
     # Push the Docker image to Google Container Registry
     - name: Publish
       run: |
         docker push gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
     - name: Deploy service to Cloud Run
       run: |
-        gcloud beta run deploy petsmanagement-api \
+        gcloud beta run deploy dictionariesmanagement-api \
           --image "gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA" \
           --project "$GKE_PROJECT" \
           --region "$GKE_REGION" \
           --platform managed \
           --allow-unauthenticated \
           --args=api \
-          --command=/petsmanagement \
+          --command=/dictionariesmanagement \
           --memory=128Mi

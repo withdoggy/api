@@ -7,12 +7,7 @@ import (
 
 func Run(dbCl *firestore.Client) {
 	r := gin.Default()
-	r.GET("/ping", listPetsHandler(dbCl))
+	r.GET("/", listPetsHandler(dbCl))
 	r.Run()
 
-}
-func AbortMsg(code int, err error, c *gin.Context) {
-	c.String(code, "Oops! Please retry.")
-	c.Error(err)
-	c.Abort()
 }
