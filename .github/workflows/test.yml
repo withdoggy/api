@@ -4,6 +4,8 @@ on:
   push:
     branches:
     - master
+    paths:
+    - 'petsmanagement/**'
 
 # Environment variables available to all jobs and steps in this workflow
 env:
