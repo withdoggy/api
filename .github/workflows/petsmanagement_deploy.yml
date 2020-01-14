@@ -7,7 +7,6 @@ on:
     paths:
     - 'petsmanagement/**'
 
-# Environment variables available to all jobs and steps in this workflow
 env:
   GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
   GKE_EMAIL: ${{ secrets.GKE_EMAIL }}
@@ -20,37 +19,31 @@ jobs:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Go 1.13
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.13
-      id: go
     - name: Checkout
       uses: actions/checkout@v2
 
-    # Setup gcloud CLI
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
         version: '275.0.0'
         service_account_email: ${{ secrets.GKE_EMAIL }}
         service_account_key: ${{ secrets.GKE_KEY }}
 
-    # Configure docker to use the gcloud command-line tool as a credential helper
-    - run: |
+    - name: Set up docker to authenticate
+      run: |
         # Set up docker to authenticate
         # via gcloud command-line tool.
         gcloud components install beta
         gcloud auth configure-docker
 
-    # Build the Docker image
     - name: Build docker image
       run: |
         docker build -t gcr.io/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" \
           -f petsmanagement/Dockerfile .
-    # Push the Docker image to Google Container Registry
-    - name: Publish
+
+    - name: Push the Docker image to Google Container Registry
       run: |
         docker push gcr.io/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
+
     - name: Deploy service to Cloud Run
       run: |
         gcloud beta run deploy petsmanagement-api \

@@ -1,30 +1,23 @@
 FROM golang:alpine as deps
-RUN apk add --no-cache ca-certificates git
-# Copy local code to the container image.
+ENV GO111MODULE=on
+RUN apk add --no-cache ca-certificates git ca-certificates tzdata && update-ca-certificates
+RUN adduser -D -g '' withdoggy
 WORKDIR /app
 COPY go.* /app/
-RUN go mod download
+RUN go mod download && go mod verify
 
 FROM deps as builder
-
-# Copy local code to the container image.
 WORKDIR /app
 COPY petsmanagement/ /app/petsmanagement/
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -a -installsuffix cgo -o app petsmanagement/main.go
 
-# Build the command inside the container.
-# (You may fetch or manage dependencies here,
-# either manually or with a tool like "godep".)
-RUN CGO_ENABLED=0 GOOS=linux go build -v -o app petsmanagement/main.go
-
-# Use a Docker multi-stage build to create a lean production image.
-# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
-FROM alpine
-RUN apk add --no-cache ca-certificates
+FROM scratch
 ENV GIN_MODE=release
-# Copy the binary to the production image from the builder stage.
+COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /app/app /petsmanagement
-
-# Run the web service on container startup.
+USER withdoggy
 ENTRYPOINT ["/petsmanagement"]
 CMD ["--help"]
 EXPOSE 8080
